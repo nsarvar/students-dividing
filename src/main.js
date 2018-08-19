@@ -10,7 +10,8 @@ import mathjs from 'mathjs';
 import DatatableFactory from 'vuejs-datatable';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
+import JsonExcel from 'vue-json-excel'
+import Circle8 from "vue-loading-spinner/src/components/Circle8"
 
 
 Vue.config.productionTip = false
@@ -19,6 +20,8 @@ Vue.use(BootstrapVue);
 Vue.use(mathjs);
 Vue.use(DatatableFactory);
 window.Vue = Vue;
+Vue.component('downloadExcel', JsonExcel)
+Vue.component('Circle8', Circle8)
 
 
 /* eslint-disable no-new */

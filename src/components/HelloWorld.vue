@@ -1,45 +1,53 @@
 <template>
     <b-container fluid>
+        <circle8 size="60" v-show="dataLoading"></circle8>
         <b-row>
-            <b-col cols="2">
+            <b-col md="2" sm="12">
 
                 <b-form-radio-group id="btnradios1" buttons v-model="selectedLang" :options="langs"
                                     name="radiosBtnDefault">
                 </b-form-radio-group>
             </b-col>
-            <b-col cols="4">
+            <b-col md="5" sm="12">
                 <b-form-radio-group id="btnradios1" buttons v-model="selectedGroup" :options="groups"
                                     name="radiosBtnDefault">
                 </b-form-radio-group>
             </b-col>
-            <b-col cols="3">
+            <b-col md="3" sm="12">
                 <b-form-select v-model="selectedCourse" :options="courses" class="mb-3"/>
+            </b-col>
+            <b-col md="1" sm="12">
+                <download-excel v-if="dataFilter" :data="dataFilter">
+                    <b-button variant="success">Export to Excel</b-button>
+                </download-excel>
             </b-col>
         </b-row>
         <br>
         <b-row>
-            <!--{{students[selectedGroup-1]}}-->
-
-
-                <!--<div v-for="course in students[0].course[0]">-->
-                <!--<datatable class="b-table b-table-bordered" :columns="table_columns" :data="course.students"></datatable>-->
-            <b-col v-if="students[selectedGroup-1]">
-                Total number of Students: {{students[selectedGroup-1].size}}<br>
-                Total number of Students: {{students[selectedGroup-1].course[selectedCourse-1].students.length}}<br>
+            <b-col cols="12" v-if="selectedGroup && students[selectedGroup-1]">
+                Guruhdagi talabalar soni: {{students[selectedGroup-1].size}}<br>
+                Kursdagi talabalar soni (<strong>{{courses[selectedCourse-1].text}}</strong>): {{students[selectedGroup-1].course[selectedCourse-1].students.length}}<br>
             </b-col>
-                <!--<b-table bordered striped hover :items="students[0].course[selectedCourse-1].students"-->
-                <b-table bordered striped hover :items="dataFilter"
+            <b-col cols="12" v-if="selectedGroup==0">
+                Kursdagi jami talabalar soni (<strong>{{courses[selectedCourse-1].text}} </strong>): {{ dataFilter.length }}
+            </b-col>
+            <b-col cols="12">
+                <b-table v-if="dataFilter" bordered striped hover :items="dataFilter"
+                         :sort-by.sync="sortBy"
+                         :sort-desc.sync="sortDesc"
                          :fields="table_columns">
                     <template slot="index" slot-scope="data">
                         {{data.index + 1}}
                     </template>
-                    <template slot="name" slot-scope="data">
-                        {{data.value.first}} {{data.value.last}}
+                    <template slot="choice" slot-scope="data">
+                        <span v-if="selectedCourse == data.item.ch1">1</span>
+                        <span v-if="selectedCourse == data.item.ch2">2</span>
+                        <span v-if="selectedCourse == data.item.ch3">3</span>
+                        <span v-if="selectedCourse == data.item.ch4">4</span>
+                        <span v-if="selectedCourse == data.item.ch5">5</span>
                     </template>
                 </b-table>
-                <!--</div>-->
-                <!--{{students[0].course[selectedCourse].students}}-->
-                <!--</b-col>-->
+            </b-col>
         </b-row>
 
     </b-container>
@@ -48,38 +56,46 @@
 <script>
     import axios from "axios";
     import math from "mathjs";
-    // import datatable from "DatatableFactory"
+
     export default {
         name: "HelloWorld",
         data() {
             return {
+                dataLoading: true,
+                sortBy: 'ball',
+                sortDesc: true,
                 table_columns: [
-                    'index',
-                    {label: 'F.I.O', key: 'fio'},
-                    {label: 'Ball', key: 'ball'}
+                    {label: '#', key: 'index'},
+                    {label: 'F.I.O', key: 'fio', sortable: true},
+                    {label: 'Tanlov', key: 'choice'},
+                    {label: 'Ball', key: 'ball', sortable: true}
                 ],
-                langs: [{text: 'Рус', value: 'РУС'}, {text: 'УЗБ', value: ''}],
+                langs: [
+                    {text: 'РУС', value: 'РУС'},
+                    {text: 'УЗБ', value: ''}
+                ],
                 selectedLang: '',
                 selectedCourse: 1,
                 groups: [
+                    {text: 'Barchasi', value: '0'},
                     {text: 'Guruh-1', value: '1'},
-                    {text: 'Guruh-1', value: '2'},
-                    {text: 'Guruh-2', value: '3'},
-                    {text: 'Guruh-3', value: '4'},
+                    {text: 'Guruh-2', value: '2'},
+                    {text: 'Guruh-3', value: '3'},
+                    {text: 'Guruh-4', value: '4'},
                 ],
                 selectedGroup: 1,
                 courses:
                     [
                         {
                             value: "1",
-                            text: "Давлат-хуқуқий фаолият",
-                            weight: 0.3,
+                            text: "Жиноий-хуқуқий фаолият",
+                            weight: 0.30,
                             students: []
                         },
                         {
                             value: "2",
-                            text: "Халқаро-хуқуқий фаолият",
-                            weight: 0.2,
+                            text: "Давлат-хуқуқий фаолият",
+                            weight: 0.20,
                             students: []
                         },
                         {
@@ -90,18 +106,18 @@
                         },
                         {
                             value: "4",
-                            text: "Жиноий-хуқуқий фаолият",
+                            text: "Тадбиркорлик -хуқуқий фаолият",
                             weight: 0.15,
                             students: []
                         },
                         {
-                            value: "5",
-                            text: "Тадбиркорлик -хуқуқий фаолият",
+                            value: "3",
+                            text: "Халқаро-хуқуқий фаолият",
                             weight: 0.15,
                             students: []
                         }
                     ],
-                students:[],
+                students: [],
                 studentsTemplate: [
                     {"data": [], size: 0, course: {}},
                     {"data": [], size: 0, course: {}},
@@ -113,13 +129,16 @@
             }
         },
         created() {
-            axios.get("http://176.58.120.4/api/students.php").then(response => {
+            axios.get("http://localhost/students/api.php").then(response => {
+                this.dataLoading = false
 
                 // sort and get Uzbek group students
+                if (response.data.length > 0) {
+                    this.courses = response.data[0]
+                    this.tempData = response.data[1]
+                }
 
-                if(response.data.length>0) this.tempData = response.data
-
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error)
             });
         },
@@ -127,7 +146,7 @@
             dataFilter: function () {
                 if (this.tempData) {
                     let data = this.tempData.sort(function (a, b) {
-                        return b.ball - a.ball;
+                        return parseFloat(b.ball) - parseFloat(a.ball);
                     }).filter(student => student.lang == this.selectedLang);
 
                     // get Quntile borders
@@ -136,15 +155,26 @@
                     )
 
                     //spit into 4 groups by quantile
-                    var i = 4;
                     this.students = JSON.parse(JSON.stringify(this.studentsTemplate))
 
                     for (var index in data) {
-                        if (data[index].ball == quantiles[i - 1]) i--;
-                        this.students[i].data.push(data[index]);
-                        this.students[i].size += 1
+                        if(data[index].ball <= parseFloat(quantiles[3]) && data[index].ball >= parseFloat(quantiles[2])){
+                            this.students[0].data.push(data[index])
+                            this.students[0].size += 1
+                        }
+                        else if(data[index].ball < parseFloat(quantiles[2]) && data[index].ball >= parseFloat(quantiles[1])){
+                            this.students[1].data.push(data[index])
+                            this.students[1].size += 1
+                        }
+                        else if(data[index].ball < parseFloat(quantiles[1]) && data[index].ball >= parseFloat(quantiles[0])){
+                            this.students[2].data.push(data[index])
+                            this.students[2].size += 1
+                        }
+                        else{
+                            this.students[3].data.push(data[index]);
+                            this.students[3].size += 1
+                        }
                     }
-
 
                     // set course length
                     this.students = this.students.map(student => {
@@ -156,6 +186,7 @@
                         return student
                     })
 
+                    // add students to the right courses
                     this.students.map(group => {
                         var rGroup = {}
                         Object.assign(rGroup, group)
@@ -176,9 +207,26 @@
                             }
                         })
                     })
-                    // console.log(this.students)
 
-                    return this.students[this.selectedGroup - 1].course[this.selectedCourse - 1].students
+                    if (this.selectedGroup > 0)
+                        return this.students[this.selectedGroup - 1].course[this.selectedCourse - 1].students
+                    else {
+                        let courses = []
+                        this.students.map(function (student) {
+                            student.course.map(function (course, index) {
+                                if (!courses[index]) {
+                                    courses[index] = []
+                                    courses[index] = course
+                                }
+                                else {
+                                    if (courses[index].students)
+                                        courses[index].students = courses[index].students.concat(course.students)
+                                }
+                            })
+                        })
+                        return courses[this.selectedCourse - 1].students
+                    }
+
                 }
             }
         },
@@ -211,5 +259,9 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
 </style>
