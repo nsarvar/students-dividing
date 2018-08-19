@@ -7,7 +7,6 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import BootstrapVue from 'bootstrap-vue';
 import mathjs from 'mathjs';
-import DatatableFactory from 'vuejs-datatable';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import JsonExcel from 'vue-json-excel'
@@ -18,7 +17,6 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(BootstrapVue);
 Vue.use(mathjs);
-Vue.use(DatatableFactory);
 window.Vue = Vue;
 Vue.component('downloadExcel', JsonExcel)
 Vue.component('Circle8', Circle8)

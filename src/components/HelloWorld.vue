@@ -54,7 +54,7 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import Api from "../api/index"
     import math from "mathjs";
 
     export default {
@@ -129,7 +129,7 @@
             }
         },
         created() {
-            axios.get("http://localhost/students/api.php").then(response => {
+            Api.get("api.php").then(response => {
                 this.dataLoading = false
 
                 // sort and get Uzbek group students
