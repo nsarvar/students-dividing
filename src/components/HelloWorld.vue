@@ -36,17 +36,18 @@
                          :sort-by.sync="sortBy"
                          :sort-desc.sync="sortDesc"
                          :fields="table_columns">
-                    <template slot="index" slot-scope="data">
-                        {{data.index + 1}}
+                    
+                    <template v-slot:cell(index)="data">
+                            {{ data.index + 1 }}
                     </template>
-                    <template slot="choice" slot-scope="data">
+                    <template v-slot:cell(choice)="data">
                         <span v-if="selectedCourse == data.item.ch1">1</span>
                         <span v-if="selectedCourse == data.item.ch2">2</span>
                         <span v-if="selectedCourse == data.item.ch3">3</span>
                         <span v-if="selectedCourse == data.item.ch4">4</span>
                         <span v-if="selectedCourse == data.item.ch5">5</span>
                     </template>
-                </b-table>
+                </b-table> 
             </b-col>
         </b-row>
 
@@ -111,7 +112,7 @@
                             students: []
                         },
                         {
-                            value: "3",
+                            value: "5",
                             text: "Халқаро-хуқуқий фаолият",
                             weight: 0.15,
                             students: []
@@ -144,6 +145,7 @@
         },
         computed: {
             dataFilter: function () {
+                console.log(this.selectedCourse);
                 if (this.tempData) {
                     let data = this.tempData.sort(function (a, b) {
                         return parseFloat(b.ball) - parseFloat(a.ball);
@@ -153,7 +155,8 @@
                     let quantiles = this.quartileBounds(
                         data.map(student => student.ball)
                     )
-
+                    
+                    console.log(data);
                     //spit into 4 groups by quantile
                     this.students = JSON.parse(JSON.stringify(this.studentsTemplate))
 
@@ -175,6 +178,8 @@
                             this.students[3].size += 1
                         }
                     }
+                    
+                    console.log(this.students)
 
                     // set course length
                     this.students = this.students.map(student => {
@@ -200,8 +205,8 @@
                                 rGroup.course[student.ch3 - 1].students.push(student)
                             else if (rGroup.course[student.ch4 - 1].weight > rGroup.course[student.ch4 - 1].students.length)
                                 rGroup.course[student.ch4 - 1].students.push(student)
-                            else if (rGroup.course[student.ch5 - 1].weight > rGroup.course[student.ch5 - 1].students.length)
-                                rGroup.course[student.ch5 - 1].students.push(student)
+                            // else if (rGroup.course[student.ch5 - 1].weight > rGroup.course[student.ch5 - 1].students.length)
+                            //     rGroup.course[student.ch5 - 1].students.push(student)
                             else {
                                 // console.log(student)
                             }

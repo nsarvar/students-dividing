@@ -53,7 +53,7 @@ if (($handle = fopen($fileTmpName, "r")) !== FALSE) {
             }
         }
 }
-
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,4 +69,3 @@ if (($handle = fopen($fileTmpName, "r")) !== FALSE) {
     </form>
 </body>
 </html>
-

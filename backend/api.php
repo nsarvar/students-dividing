@@ -7,3 +7,4 @@ $courses=file_get_contents("uploads/courses.json");
 
 
 echo json_encode(array_merge([json_decode($courses, true)], [json_decode($students, true)]),JSON_UNESCAPED_UNICODE);
+?>
